@@ -8,6 +8,9 @@ Setup:
         docker-compose up --build
     </li>
     <li>
+        npm install
+    </li>
+    <li>
         npm run build
     </li>
 </ul>
