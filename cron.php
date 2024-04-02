@@ -7,9 +7,9 @@ use App\App\ConsoleApp;
 
 $app = new ConsoleApp();
 
-$importer = new Importer(FILES, "postindex_mini.xlsx");
+//$importer = new Importer(FILES, "postindex_mini.xlsx");
 //$importer = new Importer(FILES, "postindex.xlsx");
-//$importer = new Importer(FILES, "new.xlsx");
+$importer = new Importer(FILES, "new.xlsx");
 
 colorLog("Started importing ...");
 $importer->run();

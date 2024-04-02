@@ -36,11 +36,6 @@ class Importer {
     protected array $with_hidden_columns = ["import_key"];
 
     /**
-     * @var FilesystemCachePool cache pool.
-     */
-    protected FilesystemCachePool $pool;
-
-    /**
      * @var string unique import key to distinguish new imported items from
      *              already existed.
      */
