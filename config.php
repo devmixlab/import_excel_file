@@ -1,5 +1,8 @@
 <?php
 
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
+
 return (function () {
     $pdo = function () {
         try {

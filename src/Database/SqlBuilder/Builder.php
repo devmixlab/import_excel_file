@@ -79,7 +79,12 @@ class Builder {
         return $this;
     }
 
-    public function initInsert(array $only = [], array $except = []) : self {
+    public function initInsert(array $only = [], array $except = [], array $with_hidden = []) : self {
+        $hidden_columns_on_insert = $this->model->hiddenColumnsOnInsert();
+        $hidden = array_diff($hidden_columns_on_insert, $with_hidden);
+
+        $except = array_unique(array_merge($except, $hidden));
+
         $sql = "
             INSERT INTO `" . $this->model->table() . "` (" . $this->model->columnsNames(true, $only, $except) . ") VALUES
         ";

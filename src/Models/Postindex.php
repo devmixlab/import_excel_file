@@ -12,6 +12,8 @@ class Postindex extends Model {
 
     protected ?string $index = "post_code_of_post_office";
 
+    protected array $hidden_columns_on_insert = ['import_key'];
+
     protected array $columns = [
         'post_code_of_post_office' => [
             'name' => 'post_code_of_post_office',
@@ -72,6 +74,11 @@ class Postindex extends Model {
             'name' => 'from_api',
             'create_defination' => "TINYINT DEFAULT(0)",
             'pdo_type' => PDO::PARAM_INT,
+        ],
+        'import_key' => [
+            'name' => 'import_key',
+            'create_defination' => "VARCHAR(255) DEFAULT NULL",
+            'pdo_type' => PDO::PARAM_STR,
         ],
     ];
 

@@ -11,6 +11,11 @@ class Model {
     protected string $table;
 
     /**
+     * @var array ignore columns on insert.
+     */
+    protected array $hidden_columns_on_insert = [];
+
+    /**
      * @var array<string, array{
      *      name: string,
      *      create_defination: string,
@@ -39,6 +44,10 @@ class Model {
             'create_defination' => "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
         ],
     ];
+
+    public function hiddenColumnsOnInsert() {
+        return $this->hidden_columns_on_insert;
+    }
 
     public function index() {
         return $this->index;

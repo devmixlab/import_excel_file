@@ -31,6 +31,22 @@ class Importer {
     protected array $except_columns = ["from_api"];
 
     /**
+     * @var array migrate with hidden columns.
+     */
+    protected array $with_hidden_columns = ["import_key"];
+
+    /**
+     * @var FilesystemCachePool cache pool.
+     */
+    protected FilesystemCachePool $pool;
+
+    /**
+     * @var string unique import key to distinguish new imported items from
+     *              already existed.
+     */
+    protected string $import_key;
+
+    /**
      * @param    string		$path	Path to file for import
      * @param    string		$file_name	Filename for import
      * @param    int		$part_size_to_ins	Size of rows, when reached perform insert of data
@@ -42,10 +58,12 @@ class Importer {
         protected string $file_name,
         protected int $part_size_to_ins = 500
     ) {
-        $this->insert_builder = Postindex::initInsert([], $this->except_columns);
+        $this->insert_builder = Postindex::initInsert(except: $this->except_columns, with_hidden: $this->with_hidden_columns);
         $this->index_numeric_key = $this->insert_builder->model()->indexExcelNumericKey();
 
         $this->model_index = $this->insert_builder->model()->index();
+
+        $this->import_key = uniqid() . "_" . time();
     }
 
     /**
@@ -76,7 +94,7 @@ class Importer {
         $this->insert_builder->execute();
 
         if($reinitialize_insert_builder)
-            $this->insert_builder = Postindex::initInsert([], $this->except_columns);
+            $this->insert_builder = Postindex::initInsert(except: $this->except_columns, with_hidden: $this->with_hidden_columns);
     }
 
     /**
@@ -94,9 +112,6 @@ class Importer {
 
         // Indexes in bar separated format of all rows that is added with API interface
         $all_api_rows_ids = $select_builder->fetchColumn();
-
-        // Stores all excel indexes columns in comma separated string
-        $excel_indexes = "";
 
         foreach ($this->reader->getSheetIterator() as $sheet) {
             $i = 0;
@@ -124,14 +139,12 @@ class Importer {
 
                 // Map excel row with numeric keys into array with string keys per column
                 $mapped_assoc_arr = $this->insert_builder->model()->mapValuesToKeys($arr);
+                $mapped_assoc_arr['import_key'] = $this->import_key;
 
                 // Append data to builder
                 $this->insert_builder->appendData($mapped_assoc_arr, false, function($sql, $keys){
                     return $sql . " (" . $keys . "),";
                 });
-
-                // Collect indexes into string as comma separated list
-                $excel_indexes .= (int)$mapped_assoc_arr[$this->model_index] . ",";
 
                 $i++;
             }
@@ -139,12 +152,15 @@ class Importer {
             $this->insertIntoDB(false);
         }
 
-        // Delete all rows which not in list indexes from excel and not added with API
-        $excel_indexes = rtrim($excel_indexes, ",");
+        // Delete all rows which not from current import and not added with API
         $delete_builder = Postindex::initDelete()->append("
-            WHERE `{$this->model_index}` NOT IN ({$excel_indexes}) AND `from_api` = 0
+            WHERE
+                `from_api` = 0 AND
+                (
+                    `import_key` != '{$this->import_key}' ||
+                    `import_key` IS NULL
+                )
         ");
-
         $delete_builder->execute();
     }
 
