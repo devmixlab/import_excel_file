@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "webpack --mode production",
+    "start": "webpack-dev-server --mode development"
+  },
+  "devDependencies": {
+    "axios": "^1.6.4",
+    "bootstrap": "^5.3.2",
+    "css-loader": "^6.10.0",
+    "mini-css-extract-plugin": "^2.8.0",
+    "progress-bar-webpack-plugin": "^2.1.0",
+    "sass": "^1.71.1",
+    "sass-loader": "^7.3.1",
+    "vue": "^3.4.0",
+    "vue-loader": "^17.4.2",
+    "vue-router": "^4.3.0",
+    "vue-template-babel-compiler": "^2.0.0",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.3"
+  },
+  "dependencies": {
+    "vue-style-loader": "^4.1.3"
+  }
+}
