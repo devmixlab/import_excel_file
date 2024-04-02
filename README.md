@@ -13,6 +13,9 @@ Setup:
     <li>
         npm run build
     </li>
+    <li>
+        php migrate.php
+    </li>
 </ul>
 
 
